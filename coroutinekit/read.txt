@@ -1,0 +1,48 @@
+package main
+
+import(
+
+	"github.com/rz1226/simplegokit/coroutinekit"
+	"time"
+	"fmt"
+
+)
+
+func s(){
+	defer func(){
+		if co := recover(); co != nil{
+			time.Sleep(time.Millisecond)
+			s()
+		}
+
+	}()
+	for i:=1;i<10000000;i++{
+		time.Sleep( time.Millisecond*1)
+		//fmt.Println("running2")
+		if i%40 == 0{
+			panic("some error oh no")
+			return
+
+		}
+	}
+}
+func s2(){
+	for i:=1;i<10000000;i++{
+		time.Sleep( time.Millisecond*1)
+		//fmt.Println("running2")
+		if i%40 == 0{
+			panic("some error oh no")
+			return
+
+		}
+	}
+}
+//m.Start(  "name", num, f(), panicRestart )
+func main(){
+
+	fmt.Println(coroutinekit.Start("正在 进行推送任务", 30, s , true ))
+	fmt.Println(coroutinekit.Start("正在 进行快速推送任务", 30, s2 , true ))
+	fmt.Println(coroutinekit.Start("正在 进行快速推送任务2", 30, s2 , false ))
+	coroutinekit.Show()
+}
+

@@ -1,0 +1,63 @@
+package main
+
+import (
+
+	"time"
+	"github.com/rz1226/simplegokit/ratekit"
+	"sync"
+	"fmt"
+
+)
+
+var rk *ratekit.RateKit
+
+func init(){
+	rk   = ratekit.NewRateKit(5200     )
+
+}
+
+func show(){
+	for{
+		time.Sleep(time.Second*1)
+		fmt.Println( rk.Show())
+	}
+}
+
+func testx(){
+
+	for i:=0;i<10000;i++{
+		f := func(a int )func()bool{
+			return func()bool{
+
+				//fmt.Println("闭包", a   )
+				time.Sleep(time.Millisecond*30)
+				return false
+			}
+
+		}(i )
+
+
+		time.Sleep(time.Microsecond*20)
+		rk.Go( f, 3   )
+
+	}
+	//fmt.Println( rk.Show())
+}
+
+
+func main(){
+	go show()
+	s := sync.WaitGroup{}
+	s.Add(1)
+	go func(){
+
+		testx()
+		s.Done()
+	}()
+
+	s.Wait()
+
+	time.Sleep( time.Second*300)
+	//fmt.Println(rk.Show())
+
+}
